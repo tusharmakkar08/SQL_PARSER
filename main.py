@@ -27,42 +27,83 @@
 import csv
 
 """ Main Code Starts Here """
-
-def selectf(listvar1,var2):
+def wheref(filename,condition):
+	"""
+		Code for where in select
+	"""
+	
+def joinf(tables,conditions):
+	"""
+		Code for joining tables
+	"""
+	if conditions!="-1":
+		# Write function for where in join
+	else:
+		# Code for joining the tables
+		
+def parsing(inp):
+	"""
+		Code for parsing the functions
+	"""
+	newstr=""
+	for i in inp:
+		if i!="(" or i!=")":
+			newstr+=i
+	# newstr made to remove paranthesis
+	
+	trialList=newstr.strip().split()
+	tableName=trialList[1].strip().split(",")
+	if trialList[0]=="Join"or"JOIN"or"join":
+		if len(trialList)<=2:
+			joinf(tableName,"-1")
+		else:
+			joinf(tablename,trialList[3:])
+			
+def selectf(listvar1,var2,varwhere):
+	"""
+		Code for selecting from table
+	"""
 	try:
-		filename=var2+".csv"
+		if var2[0]=="(":
+			parsing(var2)
+		else:
+			filename=var2+".csv"
 		with open(filename):
-			sreader=csv.reader(open(filename,"rb"))
-			var1=listvar1.strip().split(',')
-			if var1[0]=="*":
-				co=0
-				for row in sreader:
-					if co!=0:
-						print row
-					co+=1
+			if varwhere!="-1":
+					wheref(filename,varwhere)
 			else:
-				co=0
-				for row in sreader:
-					if co==0:
-						row_name=row
-						break
-				co=0
-				kinglist=[]
-				for i in row_name:
-					for j in var1:
-						#print i,j
-						if i==j:
-						#	print "lol",i,j
-							kinglist.append(co)
-					co+=1
-#				print kinglist
-				if len(kinglist)==0:
-					print "Column Not Found"
-				else:
+				sreader=csv.reader(open(filename,"rb"))  #reader for the given file
+				var1=listvar1.strip().split(',') #Splitting the columns in var1
+				if var1[0]=="*": # For All columns
+					co=0 		# Temporary Variable
 					for row in sreader:
-						for j in kinglist:
-							print row[j],
-						print
+						if co!=0:
+							print row
+						co+=1
+				else:
+					co=0
+					for row in sreader:
+						if co==0:
+							row_name=row
+							break
+					kinglist=[]  # List containing the index of columns in the table
+					for j in var1:
+						oldlength=len(kinglist)
+						co=0
+						for i in row_name:
+							if i==j:
+								kinglist.append(co)
+								break
+							co+=1
+						if len(kinglist)==oldlength:
+							print j,"Column Not Found"
+					if len(kinglist)==0:
+						print "Column Not Found"
+					else:
+						for row in sreader:
+							for j in kinglist:
+								print row[j],
+							print
 	except IOError:
 		print "File Not Found"
 		
@@ -74,10 +115,16 @@ def main():
 			break
 		L=len(a);i=0
 		while i<L:
-			if a[i]=="SELECT"or"select"or"Select" and a[i+2]=="FROM"or"from"or"From":
+			if a[i]=="SELECT"or"select"or"Select" and a[i+2]=="FROM"or"from"or"From" :
 				var1=a[i+1]
 				var2=a[i+3]
-				selectf(var1,var2)
+				try:
+					if a[i+5]=="where"or"WHERE"or"Where":
+						var3=a[i+6:]
+				except:
+					var3="-1"
+					pass
+				selectf(var1,var2,var3)
 				i+=3
 			i+=1
 	return 0
@@ -85,3 +132,9 @@ def main():
 if __name__ == '__main__':
 	main()
 
+"""
+	Format till now : 
+	Select "any_no_of_arguments" from 
+	"either_single_filename_or_
+	(Join filenames_with_comma_seperated where conditions)" where conditions
+"""
