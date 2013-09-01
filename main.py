@@ -51,19 +51,28 @@ def wheref(filename,condition,column):
 	columnid=co1
 	newstr=""
 	for i in newcond:
-		newstr+=i
+		newstr+=i+" "
+	newlistking=newstr.split()
 	sreader=csv.reader(open(filename,"rb"))  #reader for the given file
 	co=0
+	evalt=""
+	print newlistking
 	for i in sreader:
 		co1=0
 		for j in i:
-			evalt="%r%r"%(j,newstr)
+			evalt=""
+			for ting in newlistking:
+				if ting!="and" and ting!="or" and columnid==co1 and co!=0:
+					evalt+="%r%r"%(j,ting)
+				if (ting=="and" or ting=="or") and columnid==co1 and co!=0:
+					evalt+=" "+ting+" "
 			neweval=""
+			#print evalt
 			for ink in evalt:
 				if ink!="'":
 					neweval+=ink
-		#	if co!=0 and columnid==co1:
-		#		print neweval,eval(neweval)
+			#if co!=0 and columnid==co1:
+			#	print neweval,eval(neweval)
 			if columnid==co1 and co!=0 and eval(neweval):
 				print i
 			co1+=1
