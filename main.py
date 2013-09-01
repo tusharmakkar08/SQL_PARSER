@@ -99,7 +99,7 @@ def joinf(tables,conditions):
 		Code for joining tables
 	"""
 	if conditions!="-1":
-		pass
+		logging.debug("Entered joinf with tables=%s and conditions=%s"%(tables,conditions))
 	else:
 		try:
 			filename1=tables[0]+".csv"
@@ -134,18 +134,21 @@ def parsing(filename,inp,column):
 	newstr="" 		# newstr made to remove paranthesis
 	logging.debug("Entered parsing with filename=%s inp=%s and column=%s"%(filename,inp,column))
 	for i in inp:
-		if i!='(' and i!=')'and i!='-' and i!="[" and i!="]" and i!="'":
+		if i!='(' and i!=')'and i!='-' and i!="[" and i!="]" and i!="'" and i!="^":
 			newstr+=i
-		if i=="-":
+		if i=="-" or i=="^":
 			newstr+=" "
 					
 	trialList=newstr.strip().split()
+	logging.debug("triallist=%s in parsing"%(trialList))
 	tableName=trialList[1].strip().split(",")
 	if trialList[0]=="Join"or trialList[0]=="JOIN"or trialList[0]=="join":
 		if len(trialList)<=2:
+			logging.debug("Entering joinf with tablename=%s and no condition"%(tableName))
 			joinf(tableName,"-1")
 		else:
-			joinf(tablename,trialList[3:])
+			logging.debug("Entering joinf with tablename=%s and condition=%s"%(tableName,trialList[2:]))
+			joinf(tableName,trialList[2:])
 	if trialList[0]=='cond'or trialList[0]=="COND" or trialList[0]=="Cond":
 		logging.debug("Entering wheref with filename=%s,condition=%s,column=%s"%(filename,trialList[1],column))
 		wheref(filename,trialList[1],column)
@@ -195,7 +198,7 @@ def selectf(listvar1,var2,varwhere):
 						if len(kinglist)==oldlength:
 							print j,"Column Not Found"
 					if len(kinglist)==0:
-						print "Column Not Found"
+						print "------NO RESULT----"
 					else:
 						for row in sreader:
 							for j in kinglist:
@@ -234,6 +237,6 @@ if __name__ == '__main__':
 	Format till now : 
 	Select "any_no_of_arguments" from 
 	"either_single_filename_or_
-	(Join-filenames_with_comma_seperated where conditions)" where 
+	(Join-filenames_with_comma_seperated^where^conditions)" where 
 	(cond-any|no|of|conditions|using|"|")
 """
