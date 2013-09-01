@@ -26,8 +26,16 @@
 
 import csv
 import os
+import logging
 
 """ Main Code Starts Here """
+
+try:
+	open('example.log', 'w').close()
+except IOError:
+	pass
+	
+logging.basicConfig(filename='example.log',format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p',level=logging.DEBUG)
 
 def wheref(filename,condition,column):
 	"""
@@ -54,9 +62,16 @@ def wheref(filename,condition,column):
 		newstr+=i+" "
 	newlistking=newstr.split()
 	sreader=csv.reader(open(filename,"rb"))  #reader for the given file
-	co=0
 	evalt=""
-	print newlistking
+	#print newlistking
+	swriter=csv.writer(open("mix1.csv","wb"))
+	co=0
+	for i in sreader:
+		if co==0:
+			swriter.writerow(i)
+			break
+	co=0
+	swriter=csv.writer(open("mix1.csv","a"))
 	for i in sreader:
 		co1=0
 		for j in i:
@@ -74,9 +89,10 @@ def wheref(filename,condition,column):
 			#if co!=0 and columnid==co1:
 			#	print neweval,eval(neweval)
 			if columnid==co1 and co!=0 and eval(neweval):
-				print i
+				swriter.writerow(i)
 			co1+=1
 		co+=1
+		
 	
 def joinf(tables,conditions):
 	"""
@@ -108,7 +124,6 @@ def joinf(tables,conditions):
 							swriter.writerow(i+j)
 						co1+=1
 					co+=1
-				
 		except IOError:
 			print "File Not Found"
 		
@@ -117,7 +132,7 @@ def parsing(filename,inp,column):
 		Code for parsing the functions
 	"""
 	newstr="" 		# newstr made to remove paranthesis
-	
+	logging.debug("Entered parsing with filename=%s inp=%s and column=%s"%(filename,inp,column))
 	for i in inp:
 		if i!='(' and i!=')'and i!='-' and i!="[" and i!="]" and i!="'":
 			newstr+=i
@@ -132,6 +147,7 @@ def parsing(filename,inp,column):
 		else:
 			joinf(tablename,trialList[3:])
 	if trialList[0]=='cond'or trialList[0]=="COND" or trialList[0]=="Cond":
+		logging.debug("Entering wheref with filename=%s,condition=%s,column=%s"%(filename,trialList[1],column))
 		wheref(filename,trialList[1],column)
 		
 			
@@ -141,15 +157,17 @@ def selectf(listvar1,var2,varwhere):
 	"""
 	try:
 		if var2[0]=="(":
-			parsing("-1",var2)
-			selectf(listvar1,"mix",varwhere,"-1")
-			#os.remove("mix.csv")	# To be added in final code
+			parsing("-1",var2,"-1")
+			selectf(listvar1,"mix",varwhere)
+		#	os.remove("mix.csv")	# To be added in final code
 			return
 		else:
 			filename=var2+".csv"
 		with open(filename):
 			if varwhere!="-1":
 				parsing(filename,str(varwhere[1]),varwhere[0])
+				selectf(listvar1,"mix1","-1")
+		#		os.remove("mix1.csv")	# To be added in final code
 			else:
 				sreader=csv.reader(open(filename,"rb"))  #reader for the given file
 				var1=listvar1.strip().split(',') #Splitting the columns in var1
@@ -202,9 +220,11 @@ def main():
 						var3=a[i+5:]
 				except:
 					var3="-1"
+				logging.debug("Entering Selectf from main with var1=%s var2=%s and var3=%s"%(var1,var2,var3))
 				selectf(var1,var2,var3)
 				i+=3
 			i+=1
+			logging.debug("---------------------------------------------------------------------")
 	return 0
 
 if __name__ == '__main__':

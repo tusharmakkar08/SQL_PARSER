@@ -1,0 +1,6 @@
+09/01/2013 02:40:55 PM Entering Selectf from main with var1=id var2=(Join-sortdata,sortindex) and var3=-1
+09/01/2013 02:40:55 PM Entered parsing with filename=-1 inp=(Join-sortdata,sortindex) and column=-1
+09/01/2013 02:40:55 PM ---------------------------------------------------------------------
+09/01/2013 02:41:31 PM Entering Selectf from main with var1=sortdata.id var2=(Join-sortdata,sortindex) and var3=-1
+09/01/2013 02:41:31 PM Entered parsing with filename=-1 inp=(Join-sortdata,sortindex) and column=-1
+09/01/2013 02:41:31 PM ---------------------------------------------------------------------
