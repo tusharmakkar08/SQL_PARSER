@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#  untitled.py
+#  main.py
 #  
-#  Copyright 2013 tusharmakkar08 <tusharmakkar08@tusharmakkar08-Satellite-C660>
+#  Copyright 2013 tusharmakkar08 <tusharmakkar08@gmail.com>
 #  
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -25,12 +25,15 @@
 """ Importing Modules """
 
 import csv
+import os
 
 """ Main Code Starts Here """
+
 def wheref(filename,condition):
 	"""
 		Code for where in select
 	"""
+	print filename,condition
 	
 def joinf(tables,conditions):
 	"""
@@ -66,25 +69,28 @@ def joinf(tables,conditions):
 		except IOError:
 			print "File Not Found"
 		
-def parsing(inp):
+def parsing(filename,inp):
 	"""
 		Code for parsing the functions
 	"""
 	newstr="" 		# newstr made to remove paranthesis
 	
 	for i in inp:
-		if i!='(' and i!=')'and i!='-':
+		if i!='(' and i!=')'and i!='-' and i!="[" and i!="]" and i!="'":
 			newstr+=i
 		if i=="-":
 			newstr+=" "
 					
 	trialList=newstr.strip().split()
 	tableName=trialList[1].strip().split(",")
-	if trialList[0]=="Join"or"JOIN"or"join":
+	if trialList[0]=="Join"or trialList[0]=="JOIN"or trialList[0]=="join":
 		if len(trialList)<=2:
 			joinf(tableName,"-1")
 		else:
 			joinf(tablename,trialList[3:])
+	if trialList[0]=='cond'or trialList[0]=="COND" or trialList[0]=="Cond":
+		wheref(filename,trialList[1])
+		
 			
 def selectf(listvar1,var2,varwhere):
 	"""
@@ -92,14 +98,15 @@ def selectf(listvar1,var2,varwhere):
 	"""
 	try:
 		if var2[0]=="(":
-			parsing(var2)
-			selectf(listvar1,"mix","-1")
+			parsing("-1",var2)
+			selectf(listvar1,"mix",varwhere)
+			#os.remove("mix.csv")	# To be added in final code
 			return
 		else:
 			filename=var2+".csv"
 		with open(filename):
 			if varwhere!="-1":
-					wheref(filename,varwhere)
+				parsing(filename,str(varwhere))
 			else:
 				sreader=csv.reader(open(filename,"rb"))  #reader for the given file
 				var1=listvar1.strip().split(',') #Splitting the columns in var1
@@ -143,8 +150,8 @@ def main():
 		if a[0]=="-1":
 			break
 		L=len(a);i=0
-		while i<L:
-			if a[i]=="SELECT"or"select"or"Select" and a[i+2]=="FROM"or"from"or"From" :
+		while i+2<L: 	# i+2 because in other cases it gives error
+			if a[i]=="SELECT"or a[i]=="select"or a[i]=="Select" and a[i+2]=="FROM"or a[i+2]=="from"or a[i+2]=="From" :
 				var1=a[i+1]
 				var2=a[i+3]
 				try:
@@ -165,5 +172,6 @@ if __name__ == '__main__':
 	Format till now : 
 	Select "any_no_of_arguments" from 
 	"either_single_filename_or_
-	(Join-filenames_with_comma_seperated where conditions)" where conditions
+	(Join-filenames_with_comma_seperated where conditions)" where 
+	(cond-any|no|of|conditions|using|"|")
 """
