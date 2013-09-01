@@ -29,11 +29,45 @@ import os
 
 """ Main Code Starts Here """
 
-def wheref(filename,condition):
+def wheref(filename,condition,column):
 	"""
 		Code for where in select
 	"""
-	print filename,condition
+	sreader=csv.reader(open(filename,"rb"))  #reader for the given file
+	newcond=condition.strip().split("|")
+	co=0
+	flag=0
+	for i in sreader:
+		if co==0:
+			co1=0
+			for j in i:
+				if j==column:
+					flag=1
+					break
+				co1+=1
+		if flag==1:
+			break
+		co+=1
+	columnid=co1
+	newstr=""
+	for i in newcond:
+		newstr+=i
+	sreader=csv.reader(open(filename,"rb"))  #reader for the given file
+	co=0
+	for i in sreader:
+		co1=0
+		for j in i:
+			evalt="%r%r"%(j,newstr)
+			neweval=""
+			for ink in evalt:
+				if ink!="'":
+					neweval+=ink
+		#	if co!=0 and columnid==co1:
+		#		print neweval,eval(neweval)
+			if columnid==co1 and co!=0 and eval(neweval):
+				print i
+			co1+=1
+		co+=1
 	
 def joinf(tables,conditions):
 	"""
@@ -69,7 +103,7 @@ def joinf(tables,conditions):
 		except IOError:
 			print "File Not Found"
 		
-def parsing(filename,inp):
+def parsing(filename,inp,column):
 	"""
 		Code for parsing the functions
 	"""
@@ -89,7 +123,7 @@ def parsing(filename,inp):
 		else:
 			joinf(tablename,trialList[3:])
 	if trialList[0]=='cond'or trialList[0]=="COND" or trialList[0]=="Cond":
-		wheref(filename,trialList[1])
+		wheref(filename,trialList[1],column)
 		
 			
 def selectf(listvar1,var2,varwhere):
@@ -99,14 +133,14 @@ def selectf(listvar1,var2,varwhere):
 	try:
 		if var2[0]=="(":
 			parsing("-1",var2)
-			selectf(listvar1,"mix",varwhere)
+			selectf(listvar1,"mix",varwhere,"-1")
 			#os.remove("mix.csv")	# To be added in final code
 			return
 		else:
 			filename=var2+".csv"
 		with open(filename):
 			if varwhere!="-1":
-				parsing(filename,str(varwhere))
+				parsing(filename,str(varwhere[1]),varwhere[0])
 			else:
 				sreader=csv.reader(open(filename,"rb"))  #reader for the given file
 				var1=listvar1.strip().split(',') #Splitting the columns in var1
@@ -155,11 +189,10 @@ def main():
 				var1=a[i+1]
 				var2=a[i+3]
 				try:
-					if a[i+5]=="where"or"WHERE"or"Where":
-						var3=a[i+6:]
+					if a[i+4]=="where"or a[i+4]=="WHERE"or a[i+4]=="Where":
+						var3=a[i+5:]
 				except:
 					var3="-1"
-					pass
 				selectf(var1,var2,var3)
 				i+=3
 			i+=1
