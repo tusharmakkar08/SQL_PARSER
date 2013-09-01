@@ -51,6 +51,13 @@ def joinf(tables,conditions):
 					sreader1=csv.reader(open(filename1,"rb"))  #reader for the given file
 					co1=0
 					for j in sreader1:
+						if co==0 and co1==0:	# For adding details
+							k=[];k1=[]
+							for t in i:
+								k.append(tables[0]+"."+t)
+							for t in j:
+								k1.append(tables[1]+"."+t)
+							swriter.writerow(k+k1)
 						if co!=0 and co1!=0:
 							swriter.writerow(i+j)
 						co1+=1
@@ -86,6 +93,7 @@ def selectf(listvar1,var2,varwhere):
 	try:
 		if var2[0]=="(":
 			parsing(var2)
+			selectf(listvar1,"mix","-1")
 			return
 		else:
 			filename=var2+".csv"
