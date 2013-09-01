@@ -37,20 +37,40 @@ def joinf(tables,conditions):
 		Code for joining tables
 	"""
 	if conditions!="-1":
-		# Write function for where in join
+		pass
 	else:
-		# Code for joining the tables
+		try:
+			filename1=tables[0]+".csv"
+			filename2=tables[1]+".csv"
+			with open(filename1) and open(filename2):
+				sreader1=csv.reader(open(filename1,"rb"))  #reader for the given file
+				sreader2=csv.reader(open(filename2,"rb"))  #reader for the given file
+				swriter=csv.writer(open("mix.csv","wb"))
+				co=0
+				for i in sreader2 :
+					sreader1=csv.reader(open(filename1,"rb"))  #reader for the given file
+					co1=0
+					for j in sreader1:
+						if co!=0 and co1!=0:
+							swriter.writerow(i+j)
+						co1+=1
+					co+=1
+				
+		except IOError:
+			print "File Not Found"
 		
 def parsing(inp):
 	"""
 		Code for parsing the functions
 	"""
-	newstr=""
-	for i in inp:
-		if i!="(" or i!=")":
-			newstr+=i
-	# newstr made to remove paranthesis
+	newstr="" 		# newstr made to remove paranthesis
 	
+	for i in inp:
+		if i!='(' and i!=')'and i!='-':
+			newstr+=i
+		if i=="-":
+			newstr+=" "
+					
 	trialList=newstr.strip().split()
 	tableName=trialList[1].strip().split(",")
 	if trialList[0]=="Join"or"JOIN"or"join":
@@ -66,6 +86,7 @@ def selectf(listvar1,var2,varwhere):
 	try:
 		if var2[0]=="(":
 			parsing(var2)
+			return
 		else:
 			filename=var2+".csv"
 		with open(filename):
@@ -136,5 +157,5 @@ if __name__ == '__main__':
 	Format till now : 
 	Select "any_no_of_arguments" from 
 	"either_single_filename_or_
-	(Join filenames_with_comma_seperated where conditions)" where conditions
+	(Join-filenames_with_comma_seperated where conditions)" where conditions
 """
