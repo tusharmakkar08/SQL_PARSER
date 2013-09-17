@@ -37,10 +37,41 @@ except IOError:
 	
 logging.basicConfig(filename='example.log',format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p',level=logging.DEBUG)
 
+def joinwhere(listvar1,conditions):
+	"""
+		Code for joining with conditions
+	"""
+	cond=conditions[1:]
+	stringforcolumn=conditions[0][6:len(conditions[0])-1].split(",")
+	#print stringforcolumn
+	columnids=[]
+	for t in stringforcolumn:
+		co=0
+		flag=0
+		sreader=csv.reader(open("mix.csv","rb"))  #reader for the given file
+		for i in sreader:
+			if co==0:
+				co1=0
+				for j in i:
+					#print j
+					if j==t:
+						flag=1
+						break
+					co1+=1
+			if flag==1:
+				break
+			co+=1
+		columnids.append(co1)
+	logging.debug("Column id's=%s"%(columnids))
+	if len(columnids)==1:
+		wheref("mix.csv",conditions[1],stringforcolumn[0])
+		selectf(listvar1,"mix1","-1")
+		
 def wheref(filename,condition,column):
 	"""
 		Code for where in select
 	"""
+	logging.debug("Entered where with filename=%s condition=%s and column=%s"%(filename,condition,column))
 	sreader=csv.reader(open(filename,"rb"))  #reader for the given file
 	newcond=condition.strip().split("|")
 	co=0
@@ -63,7 +94,7 @@ def wheref(filename,condition,column):
 	newlistking=newstr.split()
 	sreader=csv.reader(open(filename,"rb"))  #reader for the given file
 	evalt=""
-	#print newlistking
+	logging.debug("Newlistking=%s and columnid=%s"%(newlistking,co1))
 	swriter=csv.writer(open("mix1.csv","wb"))
 	co=0
 	for i in sreader:
@@ -82,7 +113,7 @@ def wheref(filename,condition,column):
 				if (ting=="and" or ting=="or") and columnid==co1 and co!=0:
 					evalt+=" "+ting+" "
 			neweval=""
-			#print evalt
+			#logging.debug("evalt=%s"%(evalt))
 			for ink in evalt:
 				if ink!="'":
 					neweval+=ink
@@ -94,40 +125,42 @@ def wheref(filename,condition,column):
 		co+=1
 		
 	
-def joinf(tables,conditions):
+def joinf(listvar1,tables,conditions,varwhere):
 	"""
 		Code for joining tables
 	"""
+	try:
+		filename1=tables[0]+".csv"
+		filename2=tables[1]+".csv"
+		with open(filename1) and open(filename2):
+			sreader1=csv.reader(open(filename1,"rb"))  #reader for the given file
+			sreader2=csv.reader(open(filename2,"rb"))  #reader for the given file
+			swriter=csv.writer(open("mix.csv","wb"))
+			co=0
+			for i in sreader2 :
+				sreader1=csv.reader(open(filename1,"rb"))  #reader for the given file
+				co1=0
+				for j in sreader1:
+					if co==0 and co1==0:	# For adding details
+						k=[];k1=[]
+						for t in i:
+							k.append(tables[1]+"."+t)
+						for t in j:
+							k1.append(tables[0]+"."+t)
+						swriter.writerow(k+k1)
+					if co!=0 and co1!=0:
+						swriter.writerow(i+j)
+					co1+=1
+				co+=1
+	except IOError:
+		print "File Not Found"
 	if conditions!="-1":
 		logging.debug("Entered joinf with tables=%s and conditions=%s"%(tables,conditions))
+		joinwhere(listvar1,conditions)
 	else:
-		try:
-			filename1=tables[0]+".csv"
-			filename2=tables[1]+".csv"
-			with open(filename1) and open(filename2):
-				sreader1=csv.reader(open(filename1,"rb"))  #reader for the given file
-				sreader2=csv.reader(open(filename2,"rb"))  #reader for the given file
-				swriter=csv.writer(open("mix.csv","wb"))
-				co=0
-				for i in sreader2 :
-					sreader1=csv.reader(open(filename1,"rb"))  #reader for the given file
-					co1=0
-					for j in sreader1:
-						if co==0 and co1==0:	# For adding details
-							k=[];k1=[]
-							for t in i:
-								k.append(tables[0]+"."+t)
-							for t in j:
-								k1.append(tables[1]+"."+t)
-							swriter.writerow(k+k1)
-						if co!=0 and co1!=0:
-							swriter.writerow(i+j)
-						co1+=1
-					co+=1
-		except IOError:
-			print "File Not Found"
+		selectf(listvar1,"mix",varwhere)
 		
-def parsing(filename,inp,column):
+def parsing(listvar1,filename,inp,column,varwhere):
 	"""
 		Code for parsing the functions
 	"""
@@ -145,10 +178,10 @@ def parsing(filename,inp,column):
 	if trialList[0]=="Join"or trialList[0]=="JOIN"or trialList[0]=="join":
 		if len(trialList)<=2:
 			logging.debug("Entering joinf with tablename=%s and no condition"%(tableName))
-			joinf(tableName,"-1")
+			joinf(listvar1,tableName,"-1",varwhere)
 		else:
 			logging.debug("Entering joinf with tablename=%s and condition=%s"%(tableName,trialList[2:]))
-			joinf(tableName,trialList[2:])
+			joinf(listvar1,tableName,trialList[2:],varwhere)
 	if trialList[0]=='cond'or trialList[0]=="COND" or trialList[0]=="Cond":
 		logging.debug("Entering wheref with filename=%s,condition=%s,column=%s"%(filename,trialList[1],column))
 		wheref(filename,trialList[1],column)
@@ -158,20 +191,21 @@ def selectf(listvar1,var2,varwhere):
 	"""
 		Code for selecting from table
 	"""
+	logging.debug("Entering Selectf from main with var1=%s var2=%s and var3=%s"%(listvar1,var2,varwhere))
 	try:
 		if var2[0]=="(":
-			parsing("-1",var2,"-1")
-			selectf(listvar1,"mix",varwhere)
+			parsing(listvar1,"-1",var2,"-1",varwhere)
 		#	os.remove("mix.csv")	# To be added in final code
 			return
 		else:
 			filename=var2+".csv"
 		with open(filename):
 			if varwhere!="-1":
-				parsing(filename,str(varwhere[1]),varwhere[0])
+				parsing(listvar1,filename,str(varwhere[1]),varwhere[0],varwhere)
 				selectf(listvar1,"mix1","-1")
 		#		os.remove("mix1.csv")	# To be added in final code
 			else:
+				logging.debug("Entered main of scanf")
 				sreader=csv.reader(open(filename,"rb"))  #reader for the given file
 				var1=listvar1.strip().split(',') #Splitting the columns in var1
 				if var1[0]=="*": # For All columns
@@ -237,6 +271,16 @@ if __name__ == '__main__':
 	Format till now : 
 	Select "any_no_of_arguments" from 
 	"either_single_filename_or_
-	(Join-filenames_with_comma_seperated^where^conditions)" where 
+	(Join-filenames_with_comma_seperated^where^conditions)" where name_of_column
 	(cond-any|no|of|conditions|using|"|")
+"""
+
+"""
+	Example queries:
+		- select * from sortindex where id (cond->=5|and|<=7)
+		- select id,Algorithm_Name from sortindex
+		- select sortindex.id,sortindex.Algorithm_Name from (Join-sortdata,sortindex)
+		- select sortindex.id,sortindex.Algorithm_Name from (Join-sortdata,sortindex) where sortindex.id (cond-==4)
+		- select sortindex.id,sortindex.Algorithm_Name from (Join-sortdata,sortindex^where{sortindex.id}^==5) 
+		- select sortindex.id from (Join-sortdata,sortindex^where{sortindex.id,sortdata.id}^sortindex.id==sortdata.id)
 """
