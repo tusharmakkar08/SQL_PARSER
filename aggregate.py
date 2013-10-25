@@ -3,7 +3,7 @@
 #
 #  aggregate.py
 #  
-#  Copyright 2013 tusharmakkar08 <tusharmakkar08@tusharmakkar08-Satellite-C660>
+#  Copyright 2013 tusharmakkar08 <tusharmakkar08@gmail.com>
 #  
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by

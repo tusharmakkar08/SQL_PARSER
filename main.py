@@ -66,6 +66,45 @@ def joinwhere(listvar1,conditions):
 	if len(columnids)==1:
 		wheref("mix.csv",conditions[1],stringforcolumn[0])
 		selectf(listvar1,"mix1","-1")
+	else:
+		#print conditions[1],columnids
+		wherecomp("mix.csv",conditions[1],columnids)
+		selectf(listvar1,"mix2","-1")
+		
+def wherecomp(filename,condition,columnid):
+	"""
+		Code for where in select
+	"""
+	logging.debug("Entered where with filename=%s condition=%s and columnid=%s"%(filename,condition,columnid))
+	sreader=csv.reader(open(filename,"rb"))  #reader for the given file
+	newcond=condition.strip().split("|")
+	newstr=""
+	for i in newcond:
+		newstr+=i+" "
+	newlistking=newstr.split()
+	sreader=csv.reader(open(filename,"rb"))  #reader for the given file
+	evalt=""
+	logging.debug("Newlistking=%s"%(newlistking))
+	swriter=csv.writer(open("mix2.csv","wb"))
+	co=0
+	for i in sreader:
+		if co==0:
+			swriter.writerow(i)
+			break
+	co=0
+	swriter=csv.writer(open("mix2.csv","a"))
+	t=newlistking[0].split(',')
+	for i in sreader:
+		co1=0
+		neweval=""
+		for j in i :
+			if (co1 in columnid):
+				neweval+=j+" "
+			co1+=1
+		kt=neweval.split(" ")
+		str1=kt[0]+t[2]+kt[1]
+		if kt[1]!="" and eval(str1):
+			swriter.writerow(i)
 		
 def wheref(filename,condition,column):
 	"""
@@ -94,7 +133,7 @@ def wheref(filename,condition,column):
 	newlistking=newstr.split()
 	sreader=csv.reader(open(filename,"rb"))  #reader for the given file
 	evalt=""
-	logging.debug("Newlistking=%s and columnid=%s"%(newlistking,co1))
+	logging.debug("Newcond=%s and Newlistking=%s and columnid=%s"%(newcond,newlistking,co1))
 	swriter=csv.writer(open("mix1.csv","wb"))
 	co=0
 	for i in sreader:
@@ -282,5 +321,5 @@ if __name__ == '__main__':
 		- select sortindex.id,sortindex.Algorithm_Name from (Join-sortdata,sortindex)
 		- select sortindex.id,sortindex.Algorithm_Name from (Join-sortdata,sortindex) where sortindex.id (cond-==4)
 		- select sortindex.id,sortindex.Algorithm_Name from (Join-sortdata,sortindex^where{sortindex.id}^==5) 
-		- select sortindex.id from (Join-sortdata,sortindex^where{sortindex.id,sortdata.id}^sortindex.id==sortdata.id)
+		- select sortindex.id from (Join-sortdata,sortindex^where{sortindex.id,sortdata.id}^sortindex.id,sortdata.id[,==,])
 """
