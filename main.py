@@ -38,6 +38,9 @@ except IOError:
 logging.basicConfig(filename='example.log',format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p',level=logging.DEBUG)
 
 def Diff(list1,list2):
+	"""
+		Set Difference function
+	"""
 	logging.debug("Entering Difference function with list1=%s and list2=%s"%(list1,list2))
 	k=[];k2=[]
 	for i in list1:
@@ -57,6 +60,9 @@ def Diff(list1,list2):
 	logging.debug("------------Difference function End------------")
 
 def Int(list1,list2):
+	"""
+		Intersection function
+	"""
 	logging.debug("Entering Intersection function with list1=%s and list2=%s"%(list1,list2))
 	k=[]
 	for i in list1:
@@ -70,6 +76,9 @@ def Int(list1,list2):
 	logging.debug("------------Intersection function End------------")
 
 def Uni(list1,list2):
+	"""
+		Union function
+	"""
 	logging.debug("Entering Union function with list1=%s and list2=%s"%(list1,list2))
 	k=[]
 	for i in list1:
@@ -82,6 +91,9 @@ def Uni(list1,list2):
 	logging.debug("------------Union function End------------")
 	
 def minag(attr,filename):
+	"""
+		Minimum aggregate function
+	"""
 	logging.debug("Entering Min aggregate function with attr=%s and filename=%s"%(attr,filename))
 	sreader=csv.reader(open(filename,"rb"))  #reader for the given file
 	k=99999999
@@ -93,6 +105,9 @@ def minag(attr,filename):
 	print k
 
 def maxag(attr,filename):
+	"""
+		Maximum aggregate function
+	"""
 	logging.debug("Entering Max aggregate function with attr=%s and filename=%s"%(attr,filename))
 	sreader=csv.reader(open(filename,"rb"))  #reader for the given file
 	k=-99999999
@@ -104,6 +119,9 @@ def maxag(attr,filename):
 	print k
 
 def avgag(attr,filename):
+	"""
+		Average aggregate function
+	"""
 	logging.debug("Entering Average aggregate function with attr=%s and filename=%s"%(attr,filename))
 	sreader=csv.reader(open(filename,"rb"))  #reader for the given file
 	k=0.00;num=-2
@@ -116,6 +134,9 @@ def avgag(attr,filename):
 	print k/(num*1.00)
 	
 def countag(attr,filename):
+	"""
+		Counting aggregate function
+	"""
 	logging.debug("Entering Count aggregate function with attr=%s and filename=%s"%(attr,filename))
 	sreader=csv.reader(open(filename,"rb"))  #reader for the given file
 	num=0
@@ -162,8 +183,8 @@ def joinwhere(listvar1,conditions):
 		
 def wherecomp(filename,condition,columnid):
 	"""
-		Code for where in select
-	"""
+		Code for where in select for joins
+	""" 
 	logging.debug("Entered where with filename=%s condition=%s and columnid=%s"%(filename,condition,columnid))
 	sreader=csv.reader(open(filename,"rb"))  #reader for the given file
 	newcond=condition.strip().split("|")

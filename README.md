@@ -11,12 +11,13 @@ Functions Implemented
 * Join : Able to join 2 files at a time
 * Conditional Join 
 * Aggregate functions like min,max,sum,average,count
-
+* rename
+* Union , Intersection and Set difference
 
 Functions to be Implemented
 ---------------------------
 
-* rename
+
 
 Example queries:
 ----------------
@@ -30,9 +31,19 @@ Example queries:
 	* select sortindex.id,sortindex.Algorithm_Name from (Join-sortdata,sortindex^where{sortindex.id}^==5) 
 	* select sortindex.id from (Join-sortdata,sortindex^where{sortindex.id,sortdata.id}^sortindex.id,sortdata.id[,==,])
 	* select {id}[min],{id}[max],{id}[avg],{id}[count] from sortindex
+	* UNI
+		*select id from sortindex 
+		*select id from sortindex where id (cond->=5|and|<=7)
+	*INT
+		*select id from sortindex 
+		*select id from sortindex where id (cond->=5|and|<=7)
+	*DIFF
+		*select id from sortindex 
+		*select id from sortindex where id (cond->=5|and|<=7)
 
 * In aggregate.py 
 
 	* groupby id sortdata.csv
 	* rename sortindex.csv -1 sortindex1.csv -1
 	* rename sortindex.csv id,Algorithm_Name,Best_Case_Running_Time,Average_Case_Running_Time,Worst_Case_Running_Time,Worst_Case_Space_Complexity sortindex.csv ID,Algorithm_Name,Best_Case_Running_Time,Average_Case_Running_Time,Worst_Case_Running_Time,Worst_Case_Space_Complexity
+	
