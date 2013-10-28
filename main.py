@@ -340,6 +340,7 @@ def selectf(listvar1,var2,varwhere):
 								print
 						else:
 							for op in opli:
+								print op,"is ",
 								if op=='min':
 									minag(opli[op],filename)
 								if op=='max':
@@ -393,6 +394,5 @@ if __name__ == '__main__':
 		- select sortindex.id,sortindex.Algorithm_Name from (Join-sortdata,sortindex) where sortindex.id (cond-==4)
 		- select sortindex.id,sortindex.Algorithm_Name from (Join-sortdata,sortindex^where{sortindex.id}^==5) 
 		- select sortindex.id from (Join-sortdata,sortindex^where{sortindex.id,sortdata.id}^sortindex.id,sortdata.id[,==,])
-		- select {id}[min],{id}[max] from sortindex
-		- select {id}[avg],{id}[count] from sortindex
+		- select {id}[min],{id}[max],{id}[avg],{id}[count] from sortindex
 """
