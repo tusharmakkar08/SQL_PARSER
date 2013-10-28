@@ -3,6 +3,37 @@ SQL_PARSER
 
 Parsing SQL commands and implementing it through files
 
+
+Language Used :
+--------------
+
+* Python
+* Shell Scripting
+
+Database Used :
+---------------
+
+* Flat File System
+
+Libraries Used :
+----------------
+	
+* logging
+* csv
+* sys
+* os
+* collections
+
+How to Run :
+-----------
+<pre>
+				python main.py
+				# Run Script for Main querie
+				python aggregate.py		
+				# Running python code for aggregate functions
+</pre>
+
+
 Functions Implemented
 -----------------------
 
@@ -46,4 +77,3 @@ Example queries:
 	* groupby id sortdata.csv
 	* rename sortindex.csv -1 sortindex1.csv -1
 	* rename sortindex.csv id,Algorithm_Name,Best_Case_Running_Time,Average_Case_Running_Time,Worst_Case_Running_Time,Worst_Case_Space_Complexity sortindex.csv ID,Algorithm_Name,Best_Case_Running_Time,Average_Case_Running_Time,Worst_Case_Running_Time,Worst_Case_Space_Complexity
-	
