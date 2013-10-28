@@ -37,6 +37,15 @@ except IOError:
 	
 logging.basicConfig(filename='example.log',format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p',level=logging.DEBUG)
 
+def Diff(list1,list2):
+	pass
+
+def Int(list1,list2):
+	pass
+
+def Uni(list1,list2):
+	pass
+	
 def minag(attr,filename):
 	logging.debug("Entering Min aggregate function with attr=%s and filename=%s"%(attr,filename))
 	sreader=csv.reader(open(filename,"rb"))  #reader for the given file
@@ -270,11 +279,13 @@ def parsing(listvar1,filename,inp,column,varwhere):
 		logging.debug("Entering wheref with filename=%s,condition=%s,column=%s"%(filename,trialList[1],column))
 		wheref(filename,trialList[1],column)
 		
-			
+
+out=[]
 def selectf(listvar1,var2,varwhere):
 	"""
 		Code for selecting from table
 	"""
+	global out
 	logging.debug("Entering Selectf from main with var1=%s var2=%s and var3=%s"%(listvar1,var2,varwhere))
 	try:
 		if var2[0]=="(":
@@ -333,10 +344,14 @@ def selectf(listvar1,var2,varwhere):
 					if len(kinglist)==0:
 						print "------NO RESULT----"
 					else:
+						out=[]
 						if flag!=1:
 							for row in sreader:
+								k=[]
 								for j in kinglist:
+									k.append(row[j])
 									print row[j],
+								out.append(k)
 								print
 						else:
 							for op in opli:
@@ -354,10 +369,122 @@ def selectf(listvar1,var2,varwhere):
 		
 
 def main():
+	global out
 	while 1:
 		a=raw_input("Enter Regular Expression Statement and -1 for exit \n").strip().split()
 		if a[0]=="-1":
 			break
+		if(a[0]=="UNI"):
+			a1=raw_input("Enter Regular Expression Statement  \n").strip().split()
+			a2=raw_input("Enter Regular Expression Statement  \n").strip().split()
+			L=len(a1);i=0
+			while i+2<L: 	# i+2 because in other cases it gives error
+				if a1[i]=="SELECT"or a1[i]=="select"or a1[i]=="Select" and a1[i+2]=="FROM"or a1[i+2]=="from"or a1[i+2]=="From" :
+					var1=a1[i+1]
+					var2=a1[i+3]
+					try:
+						if a1[i+4]=="where"or a1[i+4]=="WHERE"or a1[i+4]=="Where":
+							var3=a1[i+5:]
+					except:
+						var3="-1"
+					logging.debug("Entering Selectf from main with var1=%s var2=%s and var3=%s"%(var1,var2,var3))
+					selectf(var1,var2,var3)
+					i+=3
+				i+=1
+				logging.debug("---------------------------------------------------------------------")
+			t1=out
+			L=len(a2);i=0
+			while i+2<L: 	# i+2 because in other cases it gives error
+				if a2[i]=="SELECT"or a2[i]=="select"or a2[i]=="Select" and a2[i+2]=="FROM"or a2[i+2]=="from"or a2[i+2]=="From" :
+					var1=a2[i+1]
+					var2=a2[i+3]
+					try:
+						if a2[i+4]=="where"or a2[i+4]=="WHERE"or a2[i+4]=="Where":
+							var3=a2[i+5:]
+					except:
+						var3="-1"
+					logging.debug("Entering Selectf from main with var1=%s var2=%s and var3=%s"%(var1,var2,var3))
+					selectf(var1,var2,var3)
+					i+=3
+				i+=1
+				logging.debug("---------------------------------------------------------------------")
+			t2=out
+			logging.debug("Lists are list1=%s and list2=%s"%(t1,t2))
+			Uni(t1,t2)
+		if(a[0]=="INT"):
+			a1=raw_input("Enter Regular Expression Statement  \n").strip().split()
+			a2=raw_input("Enter Regular Expression Statement  \n").strip().split()
+			L=len(a1);i=0
+			while i+2<L: 	# i+2 because in other cases it gives error
+				if a1[i]=="SELECT"or a1[i]=="select"or a1[i]=="Select" and a1[i+2]=="FROM"or a1[i+2]=="from"or a1[i+2]=="From" :
+					var1=a1[i+1]
+					var2=a1[i+3]
+					try:
+						if a1[i+4]=="where"or a1[i+4]=="WHERE"or a1[i+4]=="Where":
+							var3=a1[i+5:]
+					except:
+						var3="-1"
+					logging.debug("Entering Selectf from main with var1=%s var2=%s and var3=%s"%(var1,var2,var3))
+					selectf(var1,var2,var3)
+					i+=3
+				i+=1
+				logging.debug("---------------------------------------------------------------------")
+			t1=out
+			L=len(a2);i=0
+			while i+2<L: 	# i+2 because in other cases it gives error
+				if a2[i]=="SELECT"or a2[i]=="select"or a2[i]=="Select" and a2[i+2]=="FROM"or a2[i+2]=="from"or a2[i+2]=="From" :
+					var1=a2[i+1]
+					var2=a2[i+3]
+					try:
+						if a2[i+4]=="where"or a2[i+4]=="WHERE"or a2[i+4]=="Where":
+							var3=a2[i+5:]
+					except:
+						var3="-1"
+					logging.debug("Entering Selectf from main with var1=%s var2=%s and var3=%s"%(var1,var2,var3))
+					selectf(var1,var2,var3)
+					i+=3
+				i+=1
+				logging.debug("---------------------------------------------------------------------")
+			t2=out
+			logging.debug("Lists are list1=%s and list2=%s"%(t1,t2))
+			Int(t1,t2)
+		if(a[0]=="DIFF"):
+			a1=raw_input("Enter Regular Expression Statement \n").strip().split()
+			a2=raw_input("Enter Regular Expression Statement  \n").strip().split()
+			L=len(a1);i=0
+			while i+2<L: 	# i+2 because in other cases it gives error
+				if a1[i]=="SELECT"or a1[i]=="select"or a1[i]=="Select" and a1[i+2]=="FROM"or a1[i+2]=="from"or a1[i+2]=="From" :
+					var1=a1[i+1]
+					var2=a1[i+3]
+					try:
+						if a1[i+4]=="where"or a1[i+4]=="WHERE"or a1[i+4]=="Where":
+							var3=a1[i+5:]
+					except:
+						var3="-1"
+					logging.debug("Entering Selectf from main with var1=%s var2=%s and var3=%s"%(var1,var2,var3))
+					selectf(var1,var2,var3)
+					i+=3
+				i+=1
+				logging.debug("---------------------------------------------------------------------")
+			t1=out
+			L=len(a2);i=0
+			while i+2<L: 	# i+2 because in other cases it gives error
+				if a2[i]=="SELECT"or a2[i]=="select"or a2[i]=="Select" and a2[i+2]=="FROM"or a2[i+2]=="from"or a2[i+2]=="From" :
+					var1=a2[i+1]
+					var2=a2[i+3]
+					try:
+						if a2[i+4]=="where"or a2[i+4]=="WHERE"or a2[i+4]=="Where":
+							var3=a2[i+5:]
+					except:
+						var3="-1"
+					logging.debug("Entering Selectf from main with var1=%s var2=%s and var3=%s"%(var1,var2,var3))
+					selectf(var1,var2,var3)
+					i+=3
+				i+=1
+				logging.debug("---------------------------------------------------------------------")
+			t2=out
+			logging.debug("Lists are list1=%s and list2=%s"%(t1,t2))
+			Diff(t1,t2)
 		L=len(a);i=0
 		while i+2<L: 	# i+2 because in other cases it gives error
 			if a[i]=="SELECT"or a[i]=="select"or a[i]=="Select" and a[i+2]=="FROM"or a[i+2]=="from"or a[i+2]=="From" :
@@ -395,4 +522,13 @@ if __name__ == '__main__':
 		- select sortindex.id,sortindex.Algorithm_Name from (Join-sortdata,sortindex^where{sortindex.id}^==5) 
 		- select sortindex.id from (Join-sortdata,sortindex^where{sortindex.id,sortdata.id}^sortindex.id,sortdata.id[,==,])
 		- select {id}[min],{id}[max],{id}[avg],{id}[count] from sortindex
+		- UNI
+			select id from sortindex 
+			select id from sortindex where id (cond->=5|and|<=7)
+		-INT
+			select id from sortindex 
+			select id from sortindex where id (cond->=5|and|<=7)
+		-DIFF
+			select id from sortindex 
+			select id from sortindex where id (cond->=5|and|<=7)
 """
