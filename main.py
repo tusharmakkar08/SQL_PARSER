@@ -38,13 +38,48 @@ except IOError:
 logging.basicConfig(filename='example.log',format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p',level=logging.DEBUG)
 
 def Diff(list1,list2):
-	pass
+	logging.debug("Entering Difference function with list1=%s and list2=%s"%(list1,list2))
+	k=[];k2=[]
+	for i in list1:
+		k.append(i)
+	for i in list2:
+		if i in k:
+			k2.append(i)
+	k1=[]
+	for i in list1:
+		k1.append(i)
+	for i in list2:
+		if i not in k1:
+			k.append(i)
+	for i in k:
+		if i not in k2:
+			print i
+	logging.debug("------------Difference function End------------")
 
 def Int(list1,list2):
-	pass
+	logging.debug("Entering Intersection function with list1=%s and list2=%s"%(list1,list2))
+	k=[]
+	for i in list1:
+		k.append(i)
+	k1=[]
+	for i in list2:
+		if i in k:
+			k1.append(i)
+	for i in k1:
+		print i
+	logging.debug("------------Intersection function End------------")
 
 def Uni(list1,list2):
-	pass
+	logging.debug("Entering Union function with list1=%s and list2=%s"%(list1,list2))
+	k=[]
+	for i in list1:
+		k.append(i)
+	for i in list2:
+		if i not in k:
+			k.append(i)
+	for i in k:
+		print i
+	logging.debug("------------Union function End------------")
 	
 def minag(attr,filename):
 	logging.debug("Entering Min aggregate function with attr=%s and filename=%s"%(attr,filename))
@@ -392,6 +427,8 @@ def main():
 					i+=3
 				i+=1
 				logging.debug("---------------------------------------------------------------------")
+			print 
+			print
 			t1=out
 			L=len(a2);i=0
 			while i+2<L: 	# i+2 because in other cases it gives error
@@ -429,6 +466,8 @@ def main():
 					i+=3
 				i+=1
 				logging.debug("---------------------------------------------------------------------")
+			print 
+			print
 			t1=out
 			L=len(a2);i=0
 			while i+2<L: 	# i+2 because in other cases it gives error
@@ -466,6 +505,8 @@ def main():
 					i+=3
 				i+=1
 				logging.debug("---------------------------------------------------------------------")
+			print 
+			print
 			t1=out
 			L=len(a2);i=0
 			while i+2<L: 	# i+2 because in other cases it gives error
