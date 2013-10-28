@@ -37,6 +37,51 @@ except IOError:
 	
 logging.basicConfig(filename='example.log',format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p',level=logging.DEBUG)
 
+def minag(attr,filename):
+	logging.debug("Entering Min aggregate function with attr=%s and filename=%s"%(attr,filename))
+	sreader=csv.reader(open(filename,"rb"))  #reader for the given file
+	k=99999999
+	for row in sreader:
+		try:
+			k=min(int(row[attr]),k)
+		except:
+			k=99999999
+	print k
+
+def maxag(attr,filename):
+	logging.debug("Entering Max aggregate function with attr=%s and filename=%s"%(attr,filename))
+	sreader=csv.reader(open(filename,"rb"))  #reader for the given file
+	k=-99999999
+	for row in sreader:
+		try:
+			k=max(int(row[attr]),k)
+		except:
+			k=-99999999
+	print k
+
+def avgag(attr,filename):
+	logging.debug("Entering Average aggregate function with attr=%s and filename=%s"%(attr,filename))
+	sreader=csv.reader(open(filename,"rb"))  #reader for the given file
+	k=0.00;num=-2
+	for row in sreader:
+		try:
+			num+=1
+			k+=int(row[attr])
+		except :
+			pass
+	print k/(num*1.00)
+	
+def countag(attr,filename):
+	logging.debug("Entering Count aggregate function with attr=%s and filename=%s"%(attr,filename))
+	sreader=csv.reader(open(filename,"rb"))  #reader for the given file
+	num=0
+	for row in sreader:
+		try:
+			num+=1
+		except:
+			num=0
+	print num-2
+	
 def joinwhere(listvar1,conditions):
 	"""
 		Code for joining with conditions
@@ -260,11 +305,26 @@ def selectf(listvar1,var2,varwhere):
 							row_name=row
 							break
 					kinglist=[]  # List containing the index of columns in the table
+					opli={}
 					for j in var1:
 						oldlength=len(kinglist)
-						co=0
+						co=0;flag=0
+						if j[0]=="{":
+							flag=1
+							k="";flag1=0;op=""
+							for jo in j:
+								if jo=='[':
+									flag1=1
+								if (jo!="{" and jo!="}") and flag1==0:
+									k+=jo
+								if flag1==1 and jo!=']' and jo!='[':
+									op+=jo
+						if flag==1:
+							j=k
 						for i in row_name:
 							if i==j:
+								if flag==1:
+									opli[op]=co
 								kinglist.append(co)
 								break
 							co+=1
@@ -273,11 +333,22 @@ def selectf(listvar1,var2,varwhere):
 					if len(kinglist)==0:
 						print "------NO RESULT----"
 					else:
-						for row in sreader:
-							for j in kinglist:
-								print row[j],
-							print
-	except IOError:
+						if flag!=1:
+							for row in sreader:
+								for j in kinglist:
+									print row[j],
+								print
+						else:
+							for op in opli:
+								if op=='min':
+									minag(opli[op],filename)
+								if op=='max':
+									maxag(opli[op],filename)
+								if op=='count':
+									countag(opli[op],filename)
+								if op=='avg':
+									avgag(opli[op],filename)
+	except IOError:	
 		print "File Not Found"
 		
 
@@ -322,4 +393,6 @@ if __name__ == '__main__':
 		- select sortindex.id,sortindex.Algorithm_Name from (Join-sortdata,sortindex) where sortindex.id (cond-==4)
 		- select sortindex.id,sortindex.Algorithm_Name from (Join-sortdata,sortindex^where{sortindex.id}^==5) 
 		- select sortindex.id from (Join-sortdata,sortindex^where{sortindex.id,sortdata.id}^sortindex.id,sortdata.id[,==,])
+		- select {id}[min],{id}[max] from sortindex
+		- select {id}[avg],{id}[count] from sortindex
 """
