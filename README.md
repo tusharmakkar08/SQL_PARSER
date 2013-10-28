@@ -34,3 +34,5 @@ Example queries:
 * In aggregate.py 
 
 	* groupby id sortdata.csv
+	* rename sortindex.csv -1 sortindex1.csv -1
+	* rename sortindex.csv id,Algorithm_Name,Best_Case_Running_Time,Average_Case_Running_Time,Worst_Case_Running_Time,Worst_Case_Space_Complexity sortindex.csv ID,Algorithm_Name,Best_Case_Running_Time,Average_Case_Running_Time,Worst_Case_Running_Time,Worst_Case_Space_Complexity

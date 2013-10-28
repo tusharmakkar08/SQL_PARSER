@@ -28,6 +28,7 @@ import csv
 import os
 import logging
 import collections
+import sys
 
 """ Main Code Starts Here """
 
@@ -39,6 +40,7 @@ except IOError:
 logging.basicConfig(filename='example1.log',format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p',level=logging.DEBUG)
 
 def groupby(att,filen):
+	logging.debug("Entered groupby with filename=%s attr=%s"%(filen,attr))
 	sreader=csv.reader(open(filen,"rb"))
 	co=0
 	for row in sreader:
@@ -74,8 +76,33 @@ def groupby(att,filen):
 				if(ke=='id'):
 					break
 				print ke,len(v)
+	os.system("rm tring.csv")
 	
-	
+def rename(filen,attr,newfilen,newattr):
+	logging.debug("Entered Rename with filename=%s attr=%s newfilename=%s newattr=%s"%(filen,attr,newfilen,newattr))
+	if attr=='-1':
+		k="mv "+filen+" "+newfilen
+		os.system(k)
+		print "------Done-----"
+	else:
+		k="mv "+filen+" "+newfilen
+		os.system(k)
+		sreader=csv.reader(open(newfilen,"rb"))
+		swriter=csv.writer(open("tring1.csv","wb"))
+		j=0
+		for row in sreader:
+			if j==0:
+				ti=newattr.split(',')
+				print ti
+				swriter.writerow(ti)
+			else:
+				swriter.writerow(row)
+			j+=1
+		sreader=csv.reader(open("tring1.csv","rb"))
+		swriter=csv.writer(open(newfilen,"wb"))
+		for row in sreader:
+			swriter.writerow(row)
+		os.system("rm tring1.csv")
 
 def main():
 	while 1:
@@ -85,7 +112,8 @@ def main():
 		if(a[0]=="groupby"):
 			groupby(a[1],a[2])
 		if(a[0]=="rename"):
-			groupby(a[1],a[2])
+			rename(a[1],a[2],a[3],a[4])
+	logging.debug("---------------------------------------------------------------------")
 	return 0
 
 if __name__ == '__main__':
@@ -94,9 +122,12 @@ if __name__ == '__main__':
 """
 	Format:
 		- groupby attr filename
+		- rename tablename attrname new_tablename new_attrname
 """
 
 """
 	Example Queries:
-		-groupby id sortdata.csv
+		- groupby id sortdata.csv
+		- rename sortindex.csv -1 sortindex1.csv -1
+		- rename sortindex.csv id,Algorithm_Name,Best_Case_Running_Time,Average_Case_Running_Time,Worst_Case_Running_Time,Worst_Case_Space_Complexity sortindex.csv ID,Algorithm_Name,Best_Case_Running_Time,Average_Case_Running_Time,Worst_Case_Running_Time,Worst_Case_Space_Complexity
 """
