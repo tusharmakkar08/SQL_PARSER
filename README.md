@@ -21,10 +21,16 @@ Functions to be Implemented
 Example queries:
 ----------------
 
-* select * from sortindex where id (cond->=5|and|<=7)
-* select id,Algorithm_Name from sortindex
-* select sortindex.id,sortindex.Algorithm_Name from (Join-sortdata,sortindex)
-* select sortindex.id,sortindex.Algorithm_Name from (Join-sortdata,sortindex) where sortindex.id (cond-==4)
-* select sortindex.id,sortindex.Algorithm_Name from (Join-sortdata,sortindex^where{sortindex.id}^==5) 
-* select sortindex.id from (Join-sortdata,sortindex^where{sortindex.id,sortdata.id}^sortindex.id,sortdata.id[,==,])
-* select {id}[min],{id}[max],{id}[avg],{id}[count] from sortindex
+* In main.py
+
+	* select * from sortindex where id (cond->=5|and|<=7)
+	* select id,Algorithm_Name from sortindex
+	* select sortindex.id,sortindex.Algorithm_Name from (Join-sortdata,sortindex)
+	* select sortindex.id,sortindex.Algorithm_Name from (Join-sortdata,sortindex) where sortindex.id (cond-==4)
+	* select sortindex.id,sortindex.Algorithm_Name from (Join-sortdata,sortindex^where{sortindex.id}^==5) 
+	* select sortindex.id from (Join-sortdata,sortindex^where{sortindex.id,sortdata.id}^sortindex.id,sortdata.id[,==,])
+	* select {id}[min],{id}[max],{id}[avg],{id}[count] from sortindex
+
+* In aggregate.py 
+
+	* groupby id sortdata.csv

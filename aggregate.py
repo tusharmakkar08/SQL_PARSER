@@ -79,19 +79,24 @@ def groupby(att,filen):
 
 def main():
 	while 1:
-		a=raw_input("Enter Regular Expression (Aggregate) Statement and -1 for exit \n").strip().split()
+		a=raw_input("Enter Regular Expression for Groupby or Renaming Statement and -1 for exit \n").strip().split()
 		if a[0]=="-1":
 			break
 		if(a[0]=="groupby"):
 			groupby(a[1],a[2])
-		
+		if(a[0]=="rename"):
+			groupby(a[1],a[2])
 	return 0
 
 if __name__ == '__main__':
 	main()
 
 """
-	Example queries:
+	Format:
 		- groupby attr filename
 """
 
+"""
+	Example Queries:
+		-groupby id sortdata.csv
+"""
