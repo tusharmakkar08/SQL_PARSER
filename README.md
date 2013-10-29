@@ -41,7 +41,7 @@ Functions Implemented
 * Where : working for multiple conditions
 * Join : Able to join 2 files at a time
 * Conditional Join 
-* Aggregate functions like min,max,sum,average,count
+* Aggregate functions like min,max,average,count
 * rename
 * Union , Intersection and Set difference
 

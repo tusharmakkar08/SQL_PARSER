@@ -40,7 +40,7 @@ except IOError:
 logging.basicConfig(filename='example1.log',format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p',level=logging.DEBUG)
 
 def groupby(att,filen):
-	logging.debug("Entered groupby with filename=%s attr=%s"%(filen,attr))
+	logging.debug("Entered groupby with filename=%s attr=%s"%(filen,att))
 	sreader=csv.reader(open(filen,"rb"))
 	co=0
 	for row in sreader:
@@ -129,5 +129,5 @@ if __name__ == '__main__':
 	Example Queries:
 		- groupby id sortdata.csv
 		- rename sortindex.csv -1 sortindex1.csv -1
-		- rename sortindex.csv id,Algorithm_Name,Best_Case_Running_Time,Average_Case_Running_Time,Worst_Case_Running_Time,Worst_Case_Space_Complexity sortindex.csv ID,Algorithm_Name,Best_Case_Running_Time,Average_Case_Running_Time,Worst_Case_Running_Time,Worst_Case_Space_Complexity
+		- rename sortindex.csv id,Algorithm_Name,Best_Case_Running_Time,Average_Case_Running_Time,Worst_Case_Running_Time,Worst_Case_Space_Complexity sortindex1.csv ID,Algorithm_Name,Best_Case_Running_Time,Average_Case_Running_Time,Worst_Case_Running_Time,Worst_Case_Space_Complexity
 """
