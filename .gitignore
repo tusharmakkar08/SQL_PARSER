@@ -37,3 +37,5 @@ nosetests.xml
 # File which I want not to track
 *.csv
 *.log
+Readme.*
+sql_parser_ass.*
