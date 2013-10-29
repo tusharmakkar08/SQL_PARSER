@@ -147,7 +147,7 @@ def countag(attr,filename):
 			num=0
 	print num-2
 	
-def joinwhere(listvar1,conditions):
+def joinwhere(listvar1,conditions,flagi):
 	"""
 		Code for joining with conditions
 	"""
@@ -175,11 +175,17 @@ def joinwhere(listvar1,conditions):
 	logging.debug("Column id's=%s"%(columnids))
 	if len(columnids)==1:
 		wheref("mix.csv",conditions[1],stringforcolumn[0])
-		selectf(listvar1,"mix1","-1")
+		if flagi==0:
+			selectf(listvar1,"mix1","-1")
+		else:
+			selectfuq(listvar1,"mix1","-1")
 	else:
 		#print conditions[1],columnids
 		wherecomp("mix.csv",conditions[1],columnids)
-		selectf(listvar1,"mix2","-1")
+		if flagi==0:
+			selectf(listvar1,"mix2","-1")
+		else:
+			selectfuq(listvar1,"mix1","-1")
 		
 def wherecomp(filename,condition,columnid):
 	"""
@@ -274,7 +280,7 @@ def wheref(filename,condition,column):
 		co+=1
 		
 	
-def joinf(listvar1,tables,conditions,varwhere):
+def joinf(listvar1,tables,conditions,varwhere,flagi):
 	"""
 		Code for joining tables
 	"""
@@ -305,11 +311,14 @@ def joinf(listvar1,tables,conditions,varwhere):
 		print "File Not Found"
 	if conditions!="-1":
 		logging.debug("Entered joinf with tables=%s and conditions=%s"%(tables,conditions))
-		joinwhere(listvar1,conditions)
+		joinwhere(listvar1,conditions,flagi)
 	else:
-		selectf(listvar1,"mix",varwhere)
+		if flagi==0:
+			selectf(listvar1,"mix",varwhere)
+		else:
+			selectfuq(listvar1,"mix",varwhere)
 		
-def parsing(listvar1,filename,inp,column,varwhere):
+def parsing(listvar1,filename,inp,column,varwhere,flagi):
 	"""
 		Code for parsing the functions
 	"""
@@ -327,10 +336,10 @@ def parsing(listvar1,filename,inp,column,varwhere):
 	if trialList[0]=="Join"or trialList[0]=="JOIN"or trialList[0]=="join":
 		if len(trialList)<=2:
 			logging.debug("Entering joinf with tablename=%s and no condition"%(tableName))
-			joinf(listvar1,tableName,"-1",varwhere)
+			joinf(listvar1,tableName,"-1",varwhere,flagi)
 		else:
 			logging.debug("Entering joinf with tablename=%s and condition=%s"%(tableName,trialList[2:]))
-			joinf(listvar1,tableName,trialList[2:],varwhere)
+			joinf(listvar1,tableName,trialList[2:],varwhere,flagi)
 	if trialList[0]=='cond'or trialList[0]=="COND" or trialList[0]=="Cond":
 		logging.debug("Entering wheref with filename=%s,condition=%s,column=%s"%(filename,trialList[1],column))
 		wheref(filename,trialList[1],column)
@@ -345,14 +354,14 @@ def selectf(listvar1,var2,varwhere):
 	logging.debug("Entering Selectf from main with var1=%s var2=%s and var3=%s"%(listvar1,var2,varwhere))
 	try:
 		if var2[0]=="(":
-			parsing(listvar1,"-1",var2,"-1",varwhere)
+			parsing(listvar1,"-1",var2,"-1",varwhere,0)
 		#	os.remove("mix.csv")	# To be added in final code
 			return
 		else:
 			filename=var2+".csv"
 		with open(filename):
 			if varwhere!="-1":
-				parsing(listvar1,filename,str(varwhere[1]),varwhere[0],varwhere)
+				parsing(listvar1,filename,str(varwhere[1]),varwhere[0],varwhere,0)
 				selectf(listvar1,"mix1","-1")
 		#		os.remove("mix1.csv")	# To be added in final code
 			else:
@@ -422,7 +431,91 @@ def selectf(listvar1,var2,varwhere):
 									avgag(opli[op],filename)
 	except IOError:	
 		print "File Not Found"
-		
+
+def selectfuq(listvar1,var2,varwhere):
+	"""
+		Code for selecting from table
+	"""
+	global out
+	logging.debug("Entering Selectfuq from main with var1=%s var2=%s and var3=%s"%(listvar1,var2,varwhere))
+	try:
+		if var2[0]=="(":
+			parsing(listvar1,"-1",var2,"-1",varwhere,1)
+		#	os.remove("mix.csv")	# To be added in final code
+			return
+		else:
+			filename=var2+".csv"
+		with open(filename):
+			if varwhere!="-1":
+				parsing(listvar1,filename,str(varwhere[1]),varwhere[0],varwhere,1)
+				selectfuq(listvar1,"mix1","-1")
+		#		os.remove("mix1.csv")	# To be added in final code
+			else:
+				logging.debug("Entered main of scanf")
+				sreader=csv.reader(open(filename,"rb"))  #reader for the given file
+				var1=listvar1.strip().split(',') #Splitting the columns in var1
+				if var1[0]=="*": # For All columns
+					co=0 		# Temporary Variable
+					for row in sreader:
+						if co!=0:
+							print row
+						co+=1
+				else:
+					co=0
+					for row in sreader:
+						if co==0:
+							row_name=row
+							break
+					kinglist=[]  # List containing the index of columns in the table
+					opli={}
+					for j in var1:
+						oldlength=len(kinglist)
+						co=0;flag=0
+						if j[0]=="{":
+							flag=1
+							k="";flag1=0;op=""
+							for jo in j:
+								if jo=='[':
+									flag1=1
+								if (jo!="{" and jo!="}") and flag1==0:
+									k+=jo
+								if flag1==1 and jo!=']' and jo!='[':
+									op+=jo
+						if flag==1:
+							j=k
+						for i in row_name:
+							if i==j:
+								if flag==1:
+									opli[op]=co
+								kinglist.append(co)
+								break
+							co+=1
+						if len(kinglist)==oldlength:
+							print j,"Column Not Found"
+					if len(kinglist)==0:
+						print "------NO RESULT----"
+					else:
+						out=[]
+						if flag!=1:
+							for row in sreader:
+								k=[]
+								for j in kinglist:
+									k.append(row[j])
+								out.append(set(k))
+							print set(k)
+						else:
+							for op in opli:
+								print op,"is ",
+								if op=='min':
+									minag(opli[op],filename)
+								if op=='max':
+									maxag(opli[op],filename)
+								if op=='count':
+									countag(opli[op],filename)
+								if op=='avg':
+									avgag(opli[op],filename)
+	except IOError:	
+		print "File Not Found"
 
 def main():
 	global out
@@ -446,6 +539,17 @@ def main():
 					logging.debug("Entering Selectf from main with var1=%s var2=%s and var3=%s"%(var1,var2,var3))
 					selectf(var1,var2,var3)
 					i+=3
+				if a1[i]=="UQSELECT"or a1[i]=="uqselect"or a1[i]=="Uqselect" and a1[i+2]=="FROM"or a1[i+2]=="from"or a1[i+2]=="From" :
+					var1=a1[i+1]
+					var2=a1[i+3]
+					try:
+						if a1[i+4]=="where"or a1[i+4]=="WHERE"or a1[i+4]=="Where":
+							var3=a1[i+5:]
+					except:
+						var3="-1"
+					logging.debug("Entering SelectfUQ from main with var1=%s var2=%s and var3=%s"%(var1,var2,var3))
+					selectfuq(var1,var2,var3)
+					i+=3
 				i+=1
 				logging.debug("---------------------------------------------------------------------")
 			print 
@@ -463,6 +567,17 @@ def main():
 						var3="-1"
 					logging.debug("Entering Selectf from main with var1=%s var2=%s and var3=%s"%(var1,var2,var3))
 					selectf(var1,var2,var3)
+					i+=3
+				if a2[i]=="UQSELECT"or a2[i]=="uqselect"or a2[i]=="Uqselect" and a2[i+2]=="FROM"or a2[i+2]=="from"or a2[i+2]=="From" :
+					var1=a2[i+1]
+					var2=a2[i+3]
+					try:
+						if a2[i+4]=="where"or a2[i+4]=="WHERE"or a2[i+4]=="Where":
+							var3=a2[i+5:]
+					except:
+						var3="-1"
+					logging.debug("Entering SelectfUQ from main with var1=%s var2=%s and var3=%s"%(var1,var2,var3))
+					selectfuq(var1,var2,var3)
 					i+=3
 				i+=1
 				logging.debug("---------------------------------------------------------------------")
@@ -485,6 +600,17 @@ def main():
 					logging.debug("Entering Selectf from main with var1=%s var2=%s and var3=%s"%(var1,var2,var3))
 					selectf(var1,var2,var3)
 					i+=3
+				if a1[i]=="UQSELECT"or a1[i]=="uqselect"or a1[i]=="Uqselect" and a1[i+2]=="FROM"or a1[i+2]=="from"or a1[i+2]=="From" :
+					var1=a1[i+1]
+					var2=a1[i+3]
+					try:
+						if a1[i+4]=="where"or a1[i+4]=="WHERE"or a1[i+4]=="Where":
+							var3=a1[i+5:]
+					except:
+						var3="-1"
+					logging.debug("Entering SelectfUQ from main with var1=%s var2=%s and var3=%s"%(var1,var2,var3))
+					selectfuq(var1,var2,var3)
+					i+=3
 				i+=1
 				logging.debug("---------------------------------------------------------------------")
 			print 
@@ -502,6 +628,17 @@ def main():
 						var3="-1"
 					logging.debug("Entering Selectf from main with var1=%s var2=%s and var3=%s"%(var1,var2,var3))
 					selectf(var1,var2,var3)
+					i+=3
+				if a2[i]=="UQSELECT"or a2[i]=="uqselect"or a2[i]=="Uqselect" and a2[i+2]=="FROM"or a2[i+2]=="from"or a2[i+2]=="From" :
+					var1=a2[i+1]
+					var2=a2[i+3]
+					try:
+						if a2[i+4]=="where"or a2[i+4]=="WHERE"or a2[i+4]=="Where":
+							var3=a2[i+5:]
+					except:
+						var3="-1"
+					logging.debug("Entering SelectfUQ from main with var1=%s var2=%s and var3=%s"%(var1,var2,var3))
+					selectfuq(var1,var2,var3)
 					i+=3
 				i+=1
 				logging.debug("---------------------------------------------------------------------")
@@ -524,6 +661,17 @@ def main():
 					logging.debug("Entering Selectf from main with var1=%s var2=%s and var3=%s"%(var1,var2,var3))
 					selectf(var1,var2,var3)
 					i+=3
+				if a1[i]=="UQSELECT"or a1[i]=="uqselect"or a1[i]=="Uqselect" and a1[i+2]=="FROM"or a1[i+2]=="from"or a1[i+2]=="From" :
+					var1=a1[i+1]
+					var2=a1[i+3]
+					try:
+						if a1[i+4]=="where"or a1[i+4]=="WHERE"or a1[i+4]=="Where":
+							var3=a1[i+5:]
+					except:
+						var3="-1"
+					logging.debug("Entering SelectfUQ from main with var1=%s var2=%s and var3=%s"%(var1,var2,var3))
+					selectfuq(var1,var2,var3)
+					i+=3
 				i+=1
 				logging.debug("---------------------------------------------------------------------")
 			print 
@@ -542,6 +690,17 @@ def main():
 					logging.debug("Entering Selectf from main with var1=%s var2=%s and var3=%s"%(var1,var2,var3))
 					selectf(var1,var2,var3)
 					i+=3
+				if a2[i]=="UQSELECT"or a2[i]=="uqselect"or a2[i]=="Uqselect" and a2[i+2]=="FROM"or a2[i+2]=="from"or a2[i+2]=="From" :
+					var1=a2[i+1]
+					var2=a2[i+3]
+					try:
+						if a2[i+4]=="where"or a2[i+4]=="WHERE"or a2[i+4]=="Where":
+							var3=a2[i+5:]
+					except:
+						var3="-1"
+					logging.debug("Entering SelectfUQ from main with var1=%s var2=%s and var3=%s"%(var1,var2,var3))
+					selectfuq(var1,var2,var3)
+					i+=3
 				i+=1
 				logging.debug("---------------------------------------------------------------------")
 			t2=out
@@ -549,7 +708,7 @@ def main():
 			Diff(t1,t2)
 		L=len(a);i=0
 		while i+2<L: 	# i+2 because in other cases it gives error
-			if a[i]=="SELECT"or a[i]=="select"or a[i]=="Select" and a[i+2]=="FROM"or a[i+2]=="from"or a[i+2]=="From" :
+			if (a[i]=="SELECT"or a[i]=="select"or a[i]=="Select") and (a[i+2]=="FROM"or a[i+2]=="from"or a[i+2]=="From") :
 				var1=a[i+1]
 				var2=a[i+3]
 				try:
@@ -559,6 +718,17 @@ def main():
 					var3="-1"
 				logging.debug("Entering Selectf from main with var1=%s var2=%s and var3=%s"%(var1,var2,var3))
 				selectf(var1,var2,var3)
+				i+=3
+			if(a[i]=="UQSELECT"or a[i]=="uqselect"or a[i]=="Uqselect") and (a[i+2]=="FROM"or a[i+2]=="from"or a[i+2]=="From") :
+				var1=a[i+1]
+				var2=a[i+3]
+				try:
+					if a[i+4]=="where"or a[i+4]=="WHERE"or a[i+4]=="Where":
+						var3=a[i+5:]
+				except:
+					var3="-1"
+				logging.debug("Entering SelectfUQ from main with var1=%s var2=%s and var3=%s"%(var1,var2,var3))
+				selectfuq(var1,var2,var3)
 				i+=3
 			i+=1
 			logging.debug("---------------------------------------------------------------------")
@@ -593,4 +763,6 @@ if __name__ == '__main__':
 		-DIFF
 			select id from sortindex 
 			select id from sortindex where id (cond->=5|and|<=7)
+		- uqselect * from sortindex where id (cond->=5|and|<=7)
+		- uqselect sortindex.id,sortindex.Algorithm_Name from (Join-sortdata,sortindex) where sortindex.id (cond-==4)
 """

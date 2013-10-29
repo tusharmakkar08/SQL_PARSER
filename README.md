@@ -44,6 +44,7 @@ Functions Implemented
 * Aggregate functions like min,max,average,count
 * rename
 * Union , Intersection and Set difference
+* Unique Operation added 
 
 Functions to be Implemented
 ---------------------------
@@ -71,6 +72,8 @@ Example queries:
 	*DIFF
 		*select id from sortindex 
 		*select id from sortindex where id (cond->=5|and|<=7)
+	* uqselect * from sortindex where id (cond->=5|and|<=7)
+	* uqselect sortindex.id,sortindex.Algorithm_Name from (Join-sortdata,sortindex) where sortindex.id (cond-==4)
 
 * In aggregate.py 
 
