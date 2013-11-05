@@ -516,6 +516,179 @@ def selectfuq(listvar1,var2,varwhere):
 									avgag(opli[op],filename)
 	except IOError:	
 		print "File Not Found"
+		
+		
+def selectft(listvar1,var2,varwhere):
+	"""
+		Code for selecting from table
+	"""
+	global out
+	logging.debug("Entering Selectf from main with var1=%s var2=%s and var3=%s"%(listvar1,var2,varwhere))
+	try:
+		if var2[0]=="(":
+			parsing(listvar1,"-1",var2,"-1",varwhere,0)
+		#	os.remove("mix.csv")	# To be added in final code
+			return
+		else:
+			filename=var2+".csv"
+		with open(filename):
+			if varwhere!="-1":
+				parsing(listvar1,filename,str(varwhere[1]),varwhere[0],varwhere,0)
+				selectf(listvar1,"mix1","-1")
+		#		os.remove("mix1.csv")	# To be added in final code
+			else:
+				logging.debug("Entered main of scanf")
+				sreader=csv.reader(open(filename,"rb"))  #reader for the given file
+				var1=listvar1.strip().split(',') #Splitting the columns in var1
+				if var1[0]=="*": # For All columns
+					co=0 		# Temporary Variable
+					for row in sreader:
+						if co!=0:
+							print row
+						co+=1
+				else:
+					co=0
+					for row in sreader:
+						if co==0:
+							row_name=row
+							break
+					kinglist=[]  # List containing the index of columns in the table
+					opli={}
+					for j in var1:
+						oldlength=len(kinglist)
+						co=0;flag=0
+						if j[0]=="{":
+							flag=1
+							k="";flag1=0;op=""
+							for jo in j:
+								if jo=='[':
+									flag1=1
+								if (jo!="{" and jo!="}") and flag1==0:
+									k+=jo
+								if flag1==1 and jo!=']' and jo!='[':
+									op+=jo
+						if flag==1:
+							j=k
+						for i in row_name:
+							if i==j:
+								if flag==1:
+									opli[op]=co
+								kinglist.append(co)
+								break
+							co+=1
+						if len(kinglist)==oldlength:
+							print j,"Column Not Found"
+					if len(kinglist)==0:
+						print "------NO RESULT----"
+					else:
+						out=[]
+						if flag!=1:
+							for row in sreader:
+								k=[]
+								for j in kinglist:
+									k.append(row[j])
+			#						print row[j],
+								out.append(k)
+				#				print
+						else:
+							for op in opli:
+								print op,"is ",
+								if op=='min':
+									minag(opli[op],filename)
+								if op=='max':
+									maxag(opli[op],filename)
+								if op=='count':
+									countag(opli[op],filename)
+								if op=='avg':
+									avgag(opli[op],filename)
+	except IOError:	
+		print "File Not Found"
+
+def selectfuqt(listvar1,var2,varwhere):
+	"""
+		Code for selecting from table
+	"""
+	global out
+	logging.debug("Entering Selectfuq from main with var1=%s var2=%s and var3=%s"%(listvar1,var2,varwhere))
+	try:
+		if var2[0]=="(":
+			parsing(listvar1,"-1",var2,"-1",varwhere,1)
+		#	os.remove("mix.csv")	# To be added in final code
+			return
+		else:
+			filename=var2+".csv"
+		with open(filename):
+			if varwhere!="-1":
+				parsing(listvar1,filename,str(varwhere[1]),varwhere[0],varwhere,1)
+				selectfuq(listvar1,"mix1","-1")
+		#		os.remove("mix1.csv")	# To be added in final code
+			else:
+				logging.debug("Entered main of scanf")
+				sreader=csv.reader(open(filename,"rb"))  #reader for the given file
+				var1=listvar1.strip().split(',') #Splitting the columns in var1
+				if var1[0]=="*": # For All columns
+					co=0 		# Temporary Variable
+					for row in sreader:
+						if co!=0:
+							print row
+						co+=1
+				else:
+					co=0
+					for row in sreader:
+						if co==0:
+							row_name=row
+							break
+					kinglist=[]  # List containing the index of columns in the table
+					opli={}
+					for j in var1:
+						oldlength=len(kinglist)
+						co=0;flag=0
+						if j[0]=="{":
+							flag=1
+							k="";flag1=0;op=""
+							for jo in j:
+								if jo=='[':
+									flag1=1
+								if (jo!="{" and jo!="}") and flag1==0:
+									k+=jo
+								if flag1==1 and jo!=']' and jo!='[':
+									op+=jo
+						if flag==1:
+							j=k
+						for i in row_name:
+							if i==j:
+								if flag==1:
+									opli[op]=co
+								kinglist.append(co)
+								break
+							co+=1
+						if len(kinglist)==oldlength:
+							print j,"Column Not Found"
+					if len(kinglist)==0:
+						print "------NO RESULT----"
+					else:
+						out=[]
+						if flag!=1:
+							for row in sreader:
+								k=[]
+								for j in kinglist:
+									k.append(row[j])
+								out.append(set(k))
+			#				print set(k)
+						else:
+							for op in opli:
+								print op,"is ",
+								if op=='min':
+									minag(opli[op],filename)
+								if op=='max':
+									maxag(opli[op],filename)
+								if op=='count':
+									countag(opli[op],filename)
+								if op=='avg':
+									avgag(opli[op],filename)
+	except IOError:	
+		print "File Not Found"
+
 
 def main():
 	global out
@@ -523,6 +696,56 @@ def main():
 		a=raw_input("Enter Regular Expression Statement and -1 for exit \n").strip().split()
 		if a[0]=="-1":
 			break
+		if a[0]=="mqselect":
+			a1=raw_input("Enter Regular Expression Statement  \n").strip().split()
+			L=len(a1);i=0
+			print "answer for given nested query is"
+			while i+2<L: 	# i+2 because in other cases it gives error
+				if a1[i]=="SELECT"or a1[i]=="select"or a1[i]=="Select" and a1[i+2]=="FROM"or a1[i+2]=="from"or a1[i+2]=="From" :
+					var1=a1[i+1]
+					var2=a1[i+3]
+					try:
+						if a1[i+4]=="where"or a1[i+4]=="WHERE"or a1[i+4]=="Where":
+							var3=a1[i+5:]
+					except:
+						var3="-1"
+					logging.debug("Entering Selectf from main with var1=%s var2=%s and var3=%s"%(var1,var2,var3))
+					selectft(var1,var2,var3)
+					i+=3
+				if a1[i]=="UQSELECT"or a1[i]=="uqselect"or a1[i]=="Uqselect" and a1[i+2]=="FROM"or a1[i+2]=="from"or a1[i+2]=="From" :
+					var1=a1[i+1]
+					var2=a1[i+3]
+					try:
+						if a1[i+4]=="where"or a1[i+4]=="WHERE"or a1[i+4]=="Where":
+							var3=a1[i+5:]
+					except:
+						var3="-1"
+					logging.debug("Entering SelectfUQ from main with var1=%s var2=%s and var3=%s"%(var1,var2,var3))
+					selectfuqt(var1,var2,var3)
+					i+=3
+				i+=1
+				logging.debug("---------------------------------------------------------------------")
+			var3=raw_input("Enter conditions  in id's \n").split(" ")
+			if var3[1]==">=":
+				for t in out:
+					if t[0]>=var3[2]:
+						print t[0]
+			if var3[1]==">":
+				for t in out:
+					if t[0]>var3[2]:
+						print t[0]
+			if var3[1]=="<=":
+				for t in out:
+					if t[0]<=var3[2]:
+						print t[0]
+			if var3[1]=="==":
+				for t in out:
+					if t[0]==var3[2]:
+						print t[0]
+			if var3[1]=="<":
+				for t in out:
+					if t[0]<var3[2]:
+						print t[0]
 		if(a[0]=="UNI"):
 			a1=raw_input("Enter Regular Expression Statement  \n").strip().split()
 			a2=raw_input("Enter Regular Expression Statement  \n").strip().split()
@@ -765,4 +988,7 @@ if __name__ == '__main__':
 			select id from sortindex where id (cond->=5|and|<=7)
 		- uqselect * from sortindex where id (cond->=5|and|<=7)
 		- uqselect sortindex.id,sortindex.Algorithm_Name from (Join-sortdata,sortindex) where sortindex.id (cond-==4)
+		- mqselect
+		  select id from sortindex where id (cond->=5|and|<=7) 
+		  0 >= 6
 """
