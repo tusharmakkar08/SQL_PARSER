@@ -960,6 +960,10 @@ def main():
 
 if __name__ == '__main__':
 	main()
+	
+"""
+	Can apply aggregates on numbers only
+"""
 
 """
 	Format till now : 
@@ -992,4 +996,7 @@ if __name__ == '__main__':
 		- mqselect
 		  select id from sortindex where id (cond->=5|and|<=7) 
 		  0 >= 6
+		- uqselect sortindex.id from (Join-sortdata,sortindex^where{sortindex.id,sortdata.id}^sortindex.id,sortdata.id[,==,])
+		- select sortindex.id,sortindex.Algorithm_Name from (Join-sortdata,sortindex)
+		- select {sortindex.id}[avg] from (Join-sortdata,sortindex)
 """
