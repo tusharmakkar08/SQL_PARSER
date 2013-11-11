@@ -27,6 +27,7 @@
 import csv
 import os
 import logging
+from itertools import groupby
 
 """ Main Code Starts Here """
 
@@ -348,7 +349,7 @@ def parsing(listvar1,filename,inp,column,varwhere,flagi):
 out=[]
 def selectf(listvar1,var2,varwhere):
 	"""
-		Code for selecting from table
+		Normal select Code for selecting from table
 	"""
 	global out
 	logging.debug("Entering Selectf from main with var1=%s var2=%s and var3=%s"%(listvar1,var2,varwhere))
@@ -434,10 +435,10 @@ def selectf(listvar1,var2,varwhere):
 
 def selectfuq(listvar1,var2,varwhere):
 	"""
-		Code for selecting from table
+		Select Unique Code for selecting from table
 	"""
 	global out
-	logging.debug("Entering Selectfuq from main with var1=%s var2=%s and var3=%s"%(listvar1,var2,varwhere))
+	logging.debug("Entering Selectfuq for single query from main with var1=%s var2=%s and var3=%s"%(listvar1,var2,varwhere))
 	try:
 		if var2[0]=="(":
 			parsing(listvar1,"-1",var2,"-1",varwhere,1)
@@ -501,8 +502,8 @@ def selectfuq(listvar1,var2,varwhere):
 								k=[]
 								for j in kinglist:
 									k.append(row[j])
-								out.append(set(k))
-							print set(k)
+								out.append(k)
+							print [ key for key,_ in groupby(out)]
 						else:
 							for op in opli:
 								print op,"is ",
@@ -520,7 +521,7 @@ def selectfuq(listvar1,var2,varwhere):
 		
 def selectft(listvar1,var2,varwhere):
 	"""
-		Code for selecting from table
+		Multiple Select Code for selecting from table
 	"""
 	global out
 	logging.debug("Entering Selectf from main with var1=%s var2=%s and var3=%s"%(listvar1,var2,varwhere))
@@ -606,7 +607,7 @@ def selectft(listvar1,var2,varwhere):
 
 def selectfuqt(listvar1,var2,varwhere):
 	"""
-		Code for selecting from table
+		Multiple select unique Code for selecting from table
 	"""
 	global out
 	logging.debug("Entering Selectfuq from main with var1=%s var2=%s and var3=%s"%(listvar1,var2,varwhere))
@@ -674,7 +675,7 @@ def selectfuqt(listvar1,var2,varwhere):
 								for j in kinglist:
 									k.append(row[j])
 								out.append(set(k))
-			#				print set(k)
+							print set(k)
 						else:
 							for op in opli:
 								print op,"is ",
