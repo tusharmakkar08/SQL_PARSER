@@ -186,7 +186,7 @@ def joinwhere(listvar1,conditions,flagi):
 		if flagi==0:
 			selectf(listvar1,"mix2","-1")
 		else:
-			selectfuq(listvar1,"mix1","-1")
+			selectfuq(listvar1,"mix2","-1")
 		
 def wherecomp(filename,condition,columnid):
 	"""
@@ -610,7 +610,7 @@ def selectfuqt(listvar1,var2,varwhere):
 		Multiple select unique Code for selecting from table
 	"""
 	global out
-	logging.debug("Entering Selectfuq from main with var1=%s var2=%s and var3=%s"%(listvar1,var2,varwhere))
+	logging.debug("Entering Selectfuq for nested queries from main with var1=%s var2=%s and var3=%s"%(listvar1,var2,varwhere))
 	try:
 		if var2[0]=="(":
 			parsing(listvar1,"-1",var2,"-1",varwhere,1)
